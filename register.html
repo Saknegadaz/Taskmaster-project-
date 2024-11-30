@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Task Manager | Register</title>
+    <script defer src="../_/script.js"></script>
+    <link rel="stylesheet" href="../_/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body id="auth">
+    <h1>task master - register</h1>
+    <form>
+      <div class="flex">
+        <label for="username">username</label>
+        <input
+          required
+          type="text"
+          name="username"
+          placeholder="enter your username"
+        />
+      </div>
+      <div class="flex">
+        <label for="password">password</label>
+        <input
+          required
+          type="password"
+          name="password"
+          placeholder="enter your password"
+        />
+      </div>
+
+      <button type="submit">continue</button>
+      <span>
+        already having an account?
+        <a href="./login.html">login here</a>
+      </span>
+    </form>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let token = localStorage.getItem("token");
+      if (token) location.replace("/index.html");
+
+      const form = document.forms[0];
+
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        handleSubmit({
+          form,
+          method: "POST",
+          url: "http://localhost:5000/api/auth/register",
+        });
+      });
+    });
+  </script>
+</html>

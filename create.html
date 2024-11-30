@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TaskMaster</title>
+    <script defer src="./_/script.js?v=1.0.1"></script>
+    <link rel="stylesheet" href="./_/style.css?v=1.0.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body id="create-task">
+    <main>
+      <form id="new-task-form">
+        <h2>Create a New Task</h2>
+
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Task title"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Task description"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="deadline">Deadline</label>
+          <input type="date" id="deadline" name="deadline" />
+        </div>
+
+        <div class="form-group">
+          <label for="priority">Priority</label>
+          <select id="priority" name="priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="completed" name="completed" />
+            Mark as completed
+          </label>
+        </div>
+
+        <button type="submit">Create Task</button>
+      </form>
+    </main>
+  </body>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("new-task-form");
+      const token = localStorage.getItem("token");
+
+      if (!token) location.replace("/auth/login.html");
+
+      form.addEventListener("submit", (ev) => {
+        ev.preventDefault();
+
+        const formData = new FormData(form);
+        const taskData = {
+          title: formData.get("title"),
+          deadline: formData.get("deadline") || null,
+          priority: formData.get("priority") || "medium",
+          description: formData.get("description") ?? null,
+          completed: document.getElementById("completed").checked,
+        };
+
+        // Ensure required fields are provided
+        if (!taskData.title.trim()) return alert("Task title is required!");
+
+        handleSubmit({
+          form,
+          method: "POST",
+          body: taskData,
+          url: "http://localhost:5000/api/tasks",
+          onSuccess(res) {
+            alert("Task created successfully!");
+            location.replace("/index.html");
+          },
+          onFailure(error) {
+            console.error(error);
+            alert(
+              error.message || "An error occurred while creating the task."
+            );
+          },
+        });
+      });
+    });
+  </script>
+</html>

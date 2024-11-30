@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TaskMaster</title>
+    <script defer src="./_/script.js?v=1.0.1"></script>
+    <link rel="stylesheet" href="./_/style.css?v=1.0.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body id="dashboard">
+    <aside>
+      <h1>TaskMaster</h1>
+    </aside>
+
+    <main>
+      <header>
+        <h2>your tasks</h2>
+        <a href="./create.html">new task</a>
+      </header>
+
+      <section id="task-list">
+        <!-- Dynamic Task List Will Be Rendered Here -->
+      </section>
+    </main>
+  </body>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem("token");
+      if (!token) location.replace("/auth/login.html");
+
+      handleAPI({
+        method: "GET",
+        url: "http://localhost:5000/api/tasks",
+        onSuccess(data) {
+          const taskList = document.getElementById("task-list");
+          taskList.innerHTML = ""; // Clear existing content
+
+          if (data.length === 0) {
+            taskList.innerHTML = "<p>No tasks found.</p>";
+            return;
+          }
+
+          data.forEach((task) => {
+            const taskItem = createTaskItem(task); // Use the reusable function
+            taskList.appendChild(taskItem);
+          });
+
+          // Add delete functionality
+          // taskList.addEventListener("click", (e) => {
+          //   if (e.target.tagName === "BUTTON") {
+          //     const taskId = e.target.dataset.id;
+          //     handleAPI({
+          //       method: "DELETE",
+          //       url: `http://localhost:5000/api/tasks/${taskId}`,
+          //       onSuccess: () => {
+          //         e.target.closest(".task-item").remove();
+          //       },
+          //       onFailure: (err) => {
+          //         console.error("Failed to delete task:", err);
+          //       },
+          //     });
+          //   }
+          // });
+        },
+        onFailure(error) {
+          console.error(error);
+        },
+      });
+    });
+  </script>
+</html>
